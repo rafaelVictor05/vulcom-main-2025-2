@@ -7,6 +7,11 @@ const controller = {}     // Objeto vazio
 controller.create = async function(req, res) {
   try {
 
+    // Somente usuários administradores podem acessar este recurso
+    // HTTP 403: Forbidden(
+    if(! req?.authUser?.is_admin) return res.status(403).end()
+
+
     // Verifica se existe o campo "password" em "req.body".
     // Caso positivo, geramos o hash da senha antes de enviá-la
     // ao BD
@@ -32,6 +37,12 @@ controller.create = async function(req, res) {
 
 controller.retrieveAll = async function(req, res) {
   try {
+
+    // Somente usuários administradores podem acessar este recurso
+    // HTTP 403: Forbidden(
+    if(! req?.authUser?.is_admin) return res.status(403).end()
+
+
     const result = await prisma.user.findMany(
       // Omite o campo "password" do resultado
       // por questão de segurança
@@ -50,6 +61,15 @@ controller.retrieveAll = async function(req, res) {
 
 controller.retrieveOne = async function(req, res) {
   try {
+
+    // Somente usuários administradores ou o próprio usuário
+    // autenticado podem acessar este recurso
+    // HTTP 403: Forbidden
+    if(! (req?.authUser?.is_admin || 
+      Number(req?.authUser?.id) === Number(req.params.id))) 
+      return res.status(403).end()
+
+
     const result = await prisma.user.findUnique({
       // Omite o campo "password" do resultado
       // por questão de segurança
@@ -73,6 +93,11 @@ controller.retrieveOne = async function(req, res) {
 
 controller.update = async function(req, res) {
   try {
+
+    // Somente usuários administradores podem acessar este recurso
+    // HTTP 403: Forbidden(
+    if(! req?.authUser?.is_admin) return res.status(403).end()
+
 
     // Verifica se existe o campo "password" em "req.body".
     // Caso positivo, geramos o hash da senha antes de enviá-la
@@ -104,6 +129,11 @@ controller.update = async function(req, res) {
 
 controller.delete = async function(req, res) {
   try {
+
+    // Somente usuários administradores podem acessar este recurso
+    // HTTP 403: Forbidden(
+    if(! req?.authUser?.is_admin) return res.status(403).end()
+
     await prisma.user.delete({
       where: { id: Number(req.params.id) }
     })
