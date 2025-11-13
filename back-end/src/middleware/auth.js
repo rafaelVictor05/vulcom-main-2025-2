@@ -24,6 +24,7 @@ export default function(req, res, next) {
     o caso, permite continuar para o próximo middleware
     sem a verificação do token de autorização 
   */
+
   for(let route of bypassRoutes) {
     if(route.url === req.url && route.method == req.method) {
       next()    // Continua para o próximo middleware
