@@ -65,6 +65,11 @@ export default function Login() {
       // Envia email e password para o back-end para fazer autenticação
       const response = await myfetch.post('/users/login', loginData)
 
+      /*
+API2:2023 - Falha de autenticação
+ESSA VULNERABILIDADE DEVERIA SER EVITADA ao não armazenar o token localStorage.
+O armazenamento local é vulnerável a ataques XSS (Cross-Site Scripting)
+      */
       // Armazena o token retornado no localStorage (INSEGURO!)
       window.localStorage.setItem(
           import.meta.env.VITE_AUTH_TOKEN_NAME,

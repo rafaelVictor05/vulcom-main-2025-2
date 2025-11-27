@@ -37,12 +37,23 @@ controller.create = async function(req, res) {
 
 controller.retrieveAll = async function(req, res) {
   try {
+    /*
+API5:2023 - Falha de autenticação a nível de funcao
+Esta vulnerabilidade foi evitada ao verificar se o usuário é admin, sem essa validação qualquer usuário autenticado 
+iria conseguir acessar a lista de usuários
+    */
 
     // Somente usuários administradores podem acessar este recurso
     // HTTP 403: Forbidden(
     if(! req?.authUser?.is_admin) return res.status(403).end()
 
+    /*
+API3:2023 – Falha de autenticação a nível de propriedade
+Esta vulnerabilidade foi evitada com o omit sendo true. 
+O findMany do prisma normalmente retorna tudo, o que incluiria hashes de senha
+com o omit sendo true, ele nao retorna a senha
 
+    */
     const result = await prisma.user.findMany(
       // Omite o campo "password" do resultado
       // por questão de segurança
@@ -61,6 +72,13 @@ controller.retrieveAll = async function(req, res) {
 
 controller.retrieveOne = async function(req, res) {
   try {
+    /*
+API1:2023 – Falha de autenticação a nível de objeto
+Esta vulnerabilidade foi evitada ao 
+verificar se o usuário é admin ou se o id do usuário autenticado é igual 
+ao id do usuário que está sendo acessado. Caso contrário poderiamos ter casos
+onde um usuário digita o id de outro usuário e acessa as informacoes dele
+    */
 
     // Somente usuários administradores ou o próprio usuário
     // autenticado podem acessar este recurso

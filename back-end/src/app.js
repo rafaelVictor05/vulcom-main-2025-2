@@ -19,6 +19,12 @@ app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 
 
+/*
+API4: 2023 - Consumo irrestrito de recursos.
+Vulnerabilidade foi evitada com o uso de um rate limiter
+para restringir o número de requisições que cada usuário pode fazer.
+20 requisicoes / minuto
+*/
 // Rate limiter: limita a quantidade de requisições que cada usuário/IP
 // pode efetuar dentro de um determinado intervalo de tempo
 import { rateLimit } from 'express-rate-limit'
